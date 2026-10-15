@@ -1,0 +1,42 @@
+{
+  "_comment": [
+    "P1's buttons are on the arrow keys, with B on Z, A on X, Select on Tab and Start on Return. Power and the Super Game Boy's other controllers ship unbound."
+  ],
+  "AllTrollers": {
+    "Game Boy Controls": {
+      "P1 Up": "Up",
+      "P1 Down": "Down",
+      "P1 Left": "Left",
+      "P1 Right": "Right",
+      "P1 Start": "Enter",
+      "P1 Select": "Tab",
+      "P1 B": "Z",
+      "P1 A": "X",
+      "P2 Up": "",
+      "P2 Down": "",
+      "P2 Left": "",
+      "P2 Right": "",
+      "P2 Start": "",
+      "P2 Select": "",
+      "P2 B": "",
+      "P2 A": "",
+      "P3 Up": "",
+      "P3 Down": "",
+      "P3 Left": "",
+      "P3 Right": "",
+      "P3 Start": "",
+      "P3 Select": "",
+      "P3 B": "",
+      "P3 A": "",
+      "P4 Up": "",
+      "P4 Down": "",
+      "P4 Left": "",
+      "P4 Right": "",
+      "P4 Start": "",
+      "P4 Select": "",
+      "P4 B": "",
+      "P4 A": "",
+      "Power": ""
+    }
+  }
+}

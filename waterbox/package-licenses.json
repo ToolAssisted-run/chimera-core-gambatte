@@ -1,0 +1,32 @@
+{
+ "package": "gambatte",
+ "effectiveTerms": "GPL-2.0-only",
+ "commercialUse": "allowed",
+ "note": "The core is libgambatte from Gambatte-Speedrun (gambatte-core), a fork of Sindre Aamas's Gambatte, under the GNU GPL version 2 (COPYING in its repository; licenses/ in this repository holds the text); a few of its files carry no header and fall under that COPYING, and its CRC-32 code is Gary S. Brown's, free to use without restriction. Its Super Game Boy sound is Shay Green's snes_spc, under the GNU LGPL 2.1 or later. This repository's own files are MIT; built together with libgambatte, the package is under the GPL 2. The package contains no game and no boot ROM of anyone's.",
+ "components": [
+  {
+   "name": "chimera-core-gambatte (integration)",
+   "license": "MIT",
+   "url": "https://github.com/ToolAssisted-run/chimera-core-gambatte",
+   "commit": "{selfCommit}",
+   "file": "LICENSE",
+   "sourceUrl": "https://github.com/ToolAssisted-run/chimera-core-gambatte/archive/{commit}.tar.gz"
+  },
+  {
+   "name": "libgambatte (Gambatte-Speedrun)",
+   "license": "GPL-2.0-only",
+   "url": "https://github.com/pokemon-speedrunning/gambatte-core",
+   "commit": "{submodule:extern/gambatte-core}",
+   "file": "licenses/gambatte-GPL-2.0.txt",
+   "sourceUrl": "https://github.com/pokemon-speedrunning/gambatte-core/archive/{commit}.tar.gz"
+  },
+  {
+   "name": "snes_spc (in libgambatte, for the Super Game Boy's sound)",
+   "license": "LGPL-2.1-or-later",
+   "url": "https://github.com/pokemon-speedrunning/gambatte-core",
+   "commit": "{submodule:extern/gambatte-core}",
+   "file": "licenses/snes_spc-LGPL-2.1.txt",
+   "sourceUrl": "https://github.com/pokemon-speedrunning/gambatte-core/archive/{commit}.tar.gz"
+  }
+ ]
+}
