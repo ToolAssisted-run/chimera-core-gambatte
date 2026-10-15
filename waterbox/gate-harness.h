@@ -13,7 +13,14 @@
  *          --list-panel        print the panel, and which controls are live
  *          --list-dips         print the game's dip switches and their values
  *          --dump-domain NAME FILE   write a memory domain after the run;
- *                              NAME "bus:ADDRESS:LENGTH" is a part of the bus
+ *                              NAME "bus:ADDRESS:LENGTH" is a part of the bus;
+ *                              up to 8 may be given
+ *          --watch ADDRESS:LENGTH  add those bytes of the bus, in hex, to
+ *                              each report line (up to 64)
+ *          --inputs FILE       the controls held on each frame, a line a
+ *                              frame (the first line is frame 1): their
+ *                              names, separated by '|'; held as well as
+ *                              any --press
  *          --poke ADDRESS:LENGTH:VALUE:FIRST:N  write VALUE to LENGTH bytes
  *                              of the bus before each of N frames from FIRST
  *          --vid-out FILE      the last picture: "W H\n" then BGRA rows
@@ -80,7 +87,11 @@ struct gate_opts
 	int exercise;
 	int listPanel;
 	int listDips;
-	const char *dumpDomain, *dumpPath;
+	int dumps;
+	const char *dumpDomain[8], *dumpPath[8];
+	const char *inputs;
+	long watchAddr;
+	int watchLen;
 	const char *vidOut;
 	const char *savedataOut;
 	const char *avStream;
@@ -148,7 +159,15 @@ static int gate_parse_opts(int argc, char **argv, int first, struct gate_opts *o
 		else if (!strcmp(argv[i], "--exercise")) o->exercise = 1;
 		else if (!strcmp(argv[i], "--list-panel")) o->listPanel = 1;
 		else if (!strcmp(argv[i], "--list-dips")) o->listDips = 1;
-		else if (!strcmp(argv[i], "--dump-domain") && i + 2 < argc) { o->dumpDomain = argv[++i]; o->dumpPath = argv[++i]; }
+		else if (!strcmp(argv[i], "--dump-domain") && i + 2 < argc && o->dumps < 8) { o->dumpDomain[o->dumps] = argv[++i]; o->dumpPath[o->dumps++] = argv[++i]; }
+		else if (!strcmp(argv[i], "--inputs") && i + 1 < argc) o->inputs = argv[++i];
+		else if (!strcmp(argv[i], "--watch") && i + 1 < argc)
+		{
+			char *end;
+			o->watchAddr = strtol(argv[++i], &end, 0);
+			o->watchLen = *end == ':' ? (int)strtol(end + 1, 0, 0) : 1;
+			if (o->watchLen > 64) o->watchLen = 64;
+		}
 		else if (!strcmp(argv[i], "--vid-out") && i + 1 < argc) o->vidOut = argv[++i];
 		else if (!strcmp(argv[i], "--savedata-out") && i + 1 < argc) o->savedataOut = argv[++i];
 		else if (!strcmp(argv[i], "--av-stream") && i + 1 < argc) o->avStream = argv[++i];
@@ -235,6 +254,8 @@ static int gate_run(const struct gate_core *c, const struct gate_opts *o)
 		fputs(c->describe(), stdout);
 	uint8_t held[GATE_MAX_BUTTONS] = {0};
 	long lag = 0;
+	FILE *inputs = NULL;
+	if (o->inputs && !(inputs = fopen(o->inputs, "rb"))) { fprintf(stderr, "cannot read %s\n", o->inputs); return 1; }
 	FILE *avFrames = NULL, *avAudio = NULL;
 	if (o->avStream)
 	{
@@ -255,9 +276,22 @@ static int gate_run(const struct gate_core *c, const struct gate_opts *o)
 			for (int a = 0; a < c->axis_count(); a++)
 				if (c->axis_active(a))
 					c->set_axis(a, (int32_t)((f * 37 + a * 311) % 2048) - 1024);
+		uint8_t logged[GATE_MAX_BUTTONS] = {0};
+		if (inputs)
+		{
+			char line[4096];
+			if (fgets(line, sizeof line, inputs))
+			{
+				line[strcspn(line, "\r\n")] = 0;
+				for (char *name = strtok(line, "|"); name; name = strtok(NULL, "|"))
+					for (int i = 0; i < count && i < GATE_MAX_BUTTONS; i++)
+						if (!strcmp(c->button_name(i), name))
+							logged[i] = 1;
+			}
+		}
 		for (int i = 0; i < count && i < GATE_MAX_BUTTONS; i++)
 		{
-			int on = held[i];
+			int on = held[i] || logged[i];
 			for (int p = 0; p < o->presses; p++)
 				if (o->press[p].index == i && f >= o->press[p].first && f < o->press[p].first + o->press[p].count)
 					on = 1;
@@ -291,31 +325,40 @@ static int gate_run(const struct gate_core *c, const struct gate_opts *o)
 			printf("frame %5ld ram %016" PRIx64 " vid %dx%d %016" PRIx64 " aud %d %016" PRIx64 " lag %ld\n", f,
 			       gate_ram_hash(c), w, h, gate_fnv(0, v, (size_t)w * h * 4), n,
 			       gate_fnv(0, a, (size_t)n * 4), lag);
+			if (o->watchLen > 0 && c->bus_read)
+			{
+				const uint8_t *b = c->bus_read(o->watchAddr, o->watchLen);
+				printf("watch ");
+				for (int k = 0; b && k < o->watchLen; k++) printf("%02x", b[k]);
+				printf("\n");
+			}
 			fflush(stdout);
 		}
 	}
 	if (avFrames) { fclose(avFrames); fclose(avAudio); }
-	if (o->dumpDomain)
+	if (inputs) fclose(inputs);
+	for (int d = 0; d < o->dumps; d++)
 	{
+		const char *name = o->dumpDomain[d], *path = o->dumpPath[d];
 		int found = 0;
 		/* "bus:ADDRESS:LENGTH" is that part of the bus */
-		if (!strncmp(o->dumpDomain, "bus:", 4) && c->bus_read)
+		if (!strncmp(name, "bus:", 4) && c->bus_read)
 		{
 			char *end;
-			int64_t const addr = strtoll(o->dumpDomain + 4, &end, 0);
+			int64_t const addr = strtoll(name + 4, &end, 0);
 			int32_t const len = *end == ':' ? (int32_t)strtol(end + 1, 0, 0) : 0;
 			const uint8_t *bytes = len > 0 && len <= 0x10000 ? c->bus_read(addr, len) : NULL;
-			FILE *f = bytes ? fopen(o->dumpPath, "wb") : NULL;
+			FILE *f = bytes ? fopen(path, "wb") : NULL;
 			if (f) { fwrite(bytes, 1, (size_t)len, f); fclose(f); found = 1; }
 		}
 		for (int i = 0; i < c->domain_count(); i++)
-			if (!strcmp(c->domain_name(i), o->dumpDomain))
+			if (!strcmp(c->domain_name(i), name))
 			{
-				FILE *f = fopen(o->dumpPath, "wb");
+				FILE *f = fopen(path, "wb");
 				if (f) { fwrite(c->domain_ptr(i), 1, (size_t)c->domain_size(i), f); fclose(f); }
 				found = 1;
 			}
-		if (!found) { fprintf(stderr, "no memory domain '%s'\n", o->dumpDomain); return 1; }
+		if (!found) { fprintf(stderr, "no memory domain '%s'\n", name); return 1; }
 	}
 	if (o->savedataOut)
 		for (int i = 0; i < c->save_count(); i++)

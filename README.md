@@ -23,8 +23,9 @@ New, and not published yet.
   the boot ROM, in the sandbox and natively, and Pokemon Gold in Chimera's
   window and on Windows. No game was played through.
 - The link cable was tried with test programs of this repository's that
-  talk through it, and two Pokemon Golds were linked for 3,000 frames; no
-  game's own trade or battle over the cable has been played yet.
+  talk through it, and with a Pokemon trade: two Pokemon Golds, linked,
+  go to the Cable Club and trade Cyndaquil for Pidgey. No link battle
+  and no other link game has been tried.
 - Not there: the Game Boy Printer, the Game Boy Camera's picture
   and the infrared port's other end.
 

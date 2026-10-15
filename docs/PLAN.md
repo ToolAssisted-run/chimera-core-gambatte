@@ -315,10 +315,57 @@ sound mixed (`link:sound`); only P1's reads counted (`link:lag`).
 
 ### Not done or not proven
 
-- No game's own link feature (a Pokemon trade or battle, a two-player
-  game) has been played through the cable: the bytes were shown to pass
-  with the test programs only, and the Pokemon Golds were not taken to a
-  Cable Club.
+- No game's own link feature had been played through the cable here; see
+  the next entry for a Pokemon trade.
 - A Super Game Boy cannot be linked.
 - BizHawk's sound choices for the link machine (which Game Boy is heard on
   which side, each one muted or not) are not offered; all are mixed.
+
+## 2026-10-15: a Pokemon trade through the cable (user-decided)
+
+The owner asked for a scripted Pokemon trade. `tests/pokemon-trade.py`
+writes its inputs and checks the result; the test `link:trade` runs it. It
+needs the owner's Pokemon Gold and nothing else.
+
+- **Nothing from BizHawk** (owner's rule): a first version brought the game
+  to a save with a BizHawk movie of the owner's; the owner ruled that out,
+  for tests too ("we should never use anything from bizhawk, not even for
+  testing. Use chimeraProject or raw input files"). The movie and all made
+  from it were deleted.
+- **A saved game of our own.** The Cable Club opens with the Pokedex, and
+  the game will not trade away a player's only Pokemon
+  (`CheckAnyOtherAliveMonsForTrade` in pret's disassembly), so each game
+  needs two. `tests/pokemon-gold-opening.txt` (61,086 frames, a run of
+  frames a line) plays it from power-on, on a Game Boy Color with no boot
+  ROM: the options (text Fast, battle scene Off, battle style Set), a new
+  game as GOLD, Cyndaquil from Elm, the Pokedex from Mr. Pokemon and Oak,
+  the rival battle in Cherrygrove, the Mystery Egg to Elm, five Poke Balls,
+  a Pidgey caught on Route 29 (the second ball), and a save in Cherrygrove
+  City's Pokemon Center. It was written by playing through the core: paths
+  planned on pret's maps and collision tables, the position read back after
+  each stretch, wild battles run from. The save comes out the same natively
+  and in the sandbox.
+- **The link machine needs its own inputs**: a link machine's frames are
+  all 35,112 samples, a single console's end with each picture. The two
+  linked games start from the save (Continue) with the script's steps:
+  left onto the stairs, the Trade Center's attendant, her save, the link,
+  the seats, the trade screen, TRADE, yes.
+- **Two identical games do not connect.** From the same save on the same
+  frame, the two games are the same machine to the cycle: both send at the
+  same moment on their own clock, the swap of the two bytes is done twice
+  (once for each), each gets its own byte back, and the Cable Club gives
+  up with "The link has been closed because of inactivity". Two people
+  never press on the same frame: P2's inputs come 23 frames after P1's, and
+  the link connects.
+- **The result**: P1's party goes from Cyndaquil and Pidgey to Pidgey and
+  Pidgey, P2's to Cyndaquil and Cyndaquil (party at DA22, Data Crystal's
+  map of Pokemon Gold's memory). The trade's 8,514 frames give the same 86
+  digests natively and in the sandbox. With P2's delay at 0, broken on
+  purpose, the parties stay as they were and the test fails.
+
+The runners got three options for this, kept for any test: `--inputs` (a
+file of the controls held on each frame), `--watch` (bytes of the bus
+printed with each report) and up to 8 `--dump-domain`.
+
+Test script: 55 passed, 0 failed, 0 skipped. The game stays in the ignored
+local folder; on CI the test is skipped.

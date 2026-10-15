@@ -50,8 +50,10 @@ as `linkModel1` to `linkModel4`, and P2's to P4's games and saved data in
 the slots `game2` to `game4` and `savedata2` to `savedata4`. With no `model` the file's extension
 chooses: `.gbc` the Game Boy Color, anything else the Game Boy.
 `waterbox/gate-harness.h` lists the options they share (`--frames`,
-`--report`, `--press`, `--vid-out`, `--av-stream`, `--dump-domain`,
-`--savedata-out`, `--list-panel`). `tests/bgra-to-png.py` turns a
+`--report`, `--press`, `--inputs` (a file of the controls held on each
+frame), `--watch` (bytes of the bus with each report), `--vid-out`,
+`--av-stream`, `--dump-domain` (up to 8), `--savedata-out`,
+`--list-panel`). `tests/bgra-to-png.py` turns a
 `--vid-out` picture into a PNG.
 
 ## The package
@@ -89,7 +91,9 @@ no file of anyone's:
 
 The boot ROM tests need the boot ROMs in `tests/roms-local/` (`dmg_boot.bin`,
 `cgb_boot.bin`, `agb_boot.bin`, `sgb2_boot.bin`), and the game tests any
-`.gb` or `.gbc` files in `tests/games-local/`. Both folders are ignored by
+`.gb` or `.gbc` files in `tests/games-local/`. The Pokemon trade
+(`tests/pokemon-trade.py`) needs Pokemon Gold (USA, Europe) there and
+nothing else: `tests/pokemon-gold-opening.txt` plays it from power-on. Both folders are ignored by
 git; the tests say SKIP without them.
 
 The second script runs the package in Chimera's window under Mono on a

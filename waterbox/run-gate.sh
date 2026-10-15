@@ -22,7 +22,9 @@
 # WHAT NEEDS YOUR FILES (skipped without them):
 #   tests/roms-local/  the boot ROMs, under the names the core mounts them by:
 #                      dmg_boot.bin, cgb_boot.bin, agb_boot.bin, sgb2_boot.bin
-#   tests/games-local/ any .gb and .gbc games; each runs 2,000 frames
+#   tests/games-local/ any .gb and .gbc games; each runs 2,000 frames. With
+#                      Pokemon Gold (USA, Europe), a Pokemon trade through the
+#                      link cable (tests/pokemon-trade.py)
 #
 # The ways a test passes on a broken thing (Chimera's docs/gates.md) that
 # these are written against: a machine that did nothing agrees with itself,
@@ -464,6 +466,39 @@ if [ -n "$lg" ] && [ -f "$roms/cgb_boot.bin" ]; then
 		sh -c "[ \$(wc -l < '$work/lgm.stream') = 20 ] && [ $(pictures "$work/lgm.out") -ge 5 ] && cmp -s '$work/lgm.stream' '$work/lgm-box.stream'"
 else
 	report "link:game" SKIP "needs a .gbc game in tests/games-local and cgb_boot.bin in tests/roms-local"
+fi
+
+# A Pokemon trade (tests/pokemon-trade.py): Pokemon Gold played from power-on
+# by tests/pokemon-gold-opening.txt to a save in Cherrygrove City's Pokemon
+# Center, then two linked games from that save trade in the Cable Club
+gold=""
+for g in "$games"/*.gbc; do
+	[ -f "$g" ] && [ "$(sha1sum < "$g" | cut -c1-40)" = d8b8a3600a465308c9953dfa04f0081c05bdcb94 ] && { gold="$g"; break; }
+done
+if [ -n "$gold" ]; then
+	folder pks '{"model":"GBC","bootRom":"off"}' "$gold"
+	python3 "$root/tests/pokemon-trade.py" save-inputs "$work/pks.inputs"
+	pkn="$(wc -l < "$work/pks.inputs")"
+	mkdir -p "$work/pks-sav" "$work/pks-box-sav"
+	nat pks pks --frames "$pkn" --report 5000 --inputs "$work/pks.inputs" --savedata-out "$work/pks-sav"
+	box pks-box pks --frames "$pkn" --report 5000 --inputs "$work/pks.inputs" --savedata-out "$work/pks-box-sav"
+	sav="$(ls "$work/pks-sav"/*.sav 2> /dev/null | head -1)"
+	mkdir -p "$work/pkl"
+	cp "$gold" "$work/pkl/gold1.gbc"; cp "$gold" "$work/pkl/gold2.gbc"
+	cp "$sav" "$work/pkl/gold1.sav" 2> /dev/null; cp "$sav" "$work/pkl/gold2.sav" 2> /dev/null
+	printf '{"game":["gold1.gbc"],"game2":["gold2.gbc"],"savedata":["gold1.sav"],"savedata2":["gold2.sav"]}' > "$work/pkl/slots"
+	printf '{"model":"LINK2","linkModel1":"GBC","linkModel2":"GBC","bootRom":"off"}' > "$work/pkl/settings"
+	python3 "$root/tests/pokemon-trade.py" trade-inputs "$work/pkt.inputs"
+	pkt="$(wc -l < "$work/pkt.inputs")"
+	nat pkt pkl --frames "$pkt" --report 100 --inputs "$work/pkt.inputs" --dump-domain "P1 WRAM" "$work/pkt.p1" --dump-domain "P2 WRAM" "$work/pkt.p2"
+	box pkt-box pkl --frames "$pkt" --report 100 --inputs "$work/pkt.inputs" --dump-domain "P1 WRAM" "$work/pkt-box.p1" --dump-domain "P2 WRAM" "$work/pkt-box.p2"
+	stream "$work/pks.out" > "$work/pks.stream"; stream "$work/pks-box.out" > "$work/pks-box.stream"
+	stream "$work/pkt.out" > "$work/pkt.stream"; stream "$work/pkt-box.out" > "$work/pkt-box.stream"
+	parties="$(python3 "$root/tests/pokemon-trade.py" check "$work/pkt.p1" "$work/pkt.p2" 2>&1)"
+	check "link:trade" "Pokemon Gold played from power-on ($pkn frames: a new game, Cyndaquil, the Pokedex, a Pidgey caught) to a save in Cherrygrove City's Pokemon Center, the same save natively and in the sandbox; two linked games from it go up to the Cable Club, save, connect, sit down and trade Cyndaquil for Pidgey ($pkt frames): $parties; native and sandbox print the same $(wc -l < "$work/pkt.stream") digests" \
+		sh -c "[ -n '$sav' ] && cmp -s '$sav' '$work/pks-box-sav/$(basename "$sav")' && cmp -s '$work/pks.stream' '$work/pks-box.stream' && python3 '$root/tests/pokemon-trade.py' check '$work/pkt.p1' '$work/pkt.p2' > /dev/null && cmp -s '$work/pkt.stream' '$work/pkt-box.stream' && cmp -s '$work/pkt.p1' '$work/pkt-box.p1'"
+else
+	report "link:trade" SKIP "needs Pokemon Gold (USA, Europe) in tests/games-local"
 fi
 
 # ------------------------------------------------- Chimera's engine

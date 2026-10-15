@@ -40,7 +40,9 @@ design log, with what was decided, why, and what was measured.
   test script).
 - `tests/` - `make-testprog.py` (the test cartridge) and `results.py`
   (reads what it left), `hwtests.py` and `hwtests-expected-failures.txt`
-  (upstream's hardware tests through the core), `sgb-screen.py`,
+  (upstream's hardware tests through the core), `pokemon-trade.py` and
+  `pokemon-gold-opening.txt` (a Pokemon trade through the link cable, from
+  inputs of this repository's own), `sgb-screen.py`,
   `check-key-names.py`, `run-frontend.sh` (the window test, with its
   helpers), `make-project.py` (writes a project), `bgra-to-png.py` (a
   picture the runners leave, to look at). `roms-local/` and `games-local/`
@@ -85,6 +87,9 @@ purpose once and seen to fail.
   default bindings name keys Chimera knows.
 - **No boot ROM or game is committed**, uploaded to CI or attached to an
   issue.
+- **Nothing from BizHawk** (owner's rule, 2026-10-15): no movie, save or
+  other file of BizHawk's, not even for a test. Test inputs are this
+  repository's own: raw input files or Chimera projects.
 - **Say what was not tried.** A game that was not run has not been shown to
   work.
 - **Write in plain language**: commit messages, documents, comments and
