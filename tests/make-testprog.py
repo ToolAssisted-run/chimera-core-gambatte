@@ -2,7 +2,7 @@
 """Writes the core's test program: a Game Boy cartridge of this
 repository's own, so the tests need no game of anyone's.
 
-usage: make-testprog.py OUT.gb|OUT.gbc [nopad]
+usage: make-testprog.py OUT.gb|OUT.gbc [nopad] [link=master|link=slave]
 
 The cartridge is 32 KB of program with an MBC3 chip, 8 KB of battery-backed
 memory and the MBC3's clock, the kind of cartridge Pokemon Gold is. The
@@ -24,6 +24,13 @@ frame, at the start of the screen's vertical blank, it:
 At power-on it sets C000 to C004 to zero, adds one to the cartridge's memory at A010 and copies it to
 C005: how many times this cartridge was started, which shows whether saved
 data was loaded.
+
+With "link=master" it also sends its frame count's low byte through the
+link port every frame, on its own clock, and keeps what came back at C006,
+counting transfers at C007. With "link=slave" it waits on the other side's
+clock instead: when a transfer has finished it keeps the byte at C006,
+counts it at C007, and offers its own frame count with the top bit set
+(0x80 or'd in) for the next one.
 
 With "nopad" the program never reads the buttons (C000 and C001 stay
 zero): every frame of it is a lag frame.
@@ -83,6 +90,7 @@ START = [
     [0xAF],                          # xor a: the work memory's counters start at
     ld_mem_a(0xC000), ld_mem_a(0xC001), ld_mem_a(0xC002),  # zero (it is not
     ld_mem_a(0xC003), ld_mem_a(0xC004),                    # cleared at power-on)
+    ld_mem_a(0xC006), ld_mem_a(0xC007),
     [0x3E, 0x0A], ld_mem_a(0x0000),  # the cartridge's memory on
     [0xAF], ld_mem_a(0x4000),        # its first bank
     [0x21, 0x10, 0xA0],              # ld hl,A010
@@ -134,6 +142,26 @@ READ_PAD = [
     [0x47],                          # ld b,a
     ld_a_mem(0xC001), [0xB0], ld_mem_a(0xC001),
     ldh_w(0x00, 0x30),               # neither
+]
+
+# the link port, on its own clock: what came in, then the frame count out
+LINK_MASTER = [
+    [0xF0, 0x01], ld_mem_a(0xC006),  # ldh a,(SB)
+    [0x21, 0x07, 0xC0], [0x34],      # ld hl,C007 ; inc (hl)
+    ld_a_mem(0xC002), [0xE0, 0x01],  # ldh (SB),a
+    ldh_w(0x02, 0x81),               # start, on this Game Boy's clock
+]
+
+# the link port, on the other side's clock: when a transfer is done
+LINK_SLAVE = [
+    [0xF0, 0x02], [0xCB, 0x7F],      # ldh a,(SC) ; bit 7,a
+    ("jr", "nz", "waiting"),
+    [0xF0, 0x01], ld_mem_a(0xC006),
+    [0x21, 0x07, 0xC0], [0x34],
+    ld_a_mem(0xC002), [0xF6, 0x80],  # or 80
+    [0xE0, 0x01],
+    ldh_w(0x02, 0x80),               # ready, on the other side's clock
+    "waiting",
 ]
 
 REST = [
@@ -194,7 +222,8 @@ def main():
     rom[0x14A] = 0x01
     rom[0x14B] = 0x00
     nopad = "nopad" in sys.argv[2:]
-    code = assemble(START + ([] if nopad else READ_PAD) + REST, 0x150)
+    link = LINK_MASTER if "link=master" in sys.argv[2:] else LINK_SLAVE if "link=slave" in sys.argv[2:] else []
+    code = assemble(START + ([] if nopad else READ_PAD) + link + REST, 0x150)
     rom[0x150:0x150 + len(code)] = code
     # the header's checksum, which the boot ROM checks, and the whole
     # cartridge's, which nothing checks

@@ -44,7 +44,10 @@ Both runners take a work folder that holds what the sandbox would see: the
 game under its name, a boot ROM under its id (`dmg_boot.bin` and so on), a
 file `slots` (`{"game":["game.gbc"]}`, with `"savedata":["game.sav"]` for
 saved data) and a file `settings` (`{}`, or say
-`{"model":"SGB2","bootRom":"off"}`). With no `model` the file's extension
+`{"model":"SGB2","bootRom":"off"}`). A Game Boy Link machine takes
+`{"model":"LINK2"}` (or `LINK3`, `LINK4`), each linked Game Boy's console
+as `linkModel1` to `linkModel4`, and P2's to P4's games and saved data in
+the slots `game2` to `game4` and `savedata2` to `savedata4`. With no `model` the file's extension
 chooses: `.gbc` the Game Boy Color, anything else the Game Boy.
 `waterbox/gate-harness.h` lists the options they share (`--frames`,
 `--report`, `--press`, `--vid-out`, `--av-stream`, `--dump-domain`,
@@ -74,7 +77,9 @@ no file of anyone's:
 - `tests/make-testprog.py` writes a test cartridge of this repository's
   own, machine code written out in the script. It reads the buttons, counts
   frames, keeps a battery-backed memory, reads the cartridge's clock, makes
-  a tone, and turns the screen off while Select is held.
+  a tone, and turns the screen off while Select is held. With `link=master`
+  or `link=slave` it also talks through the link port, for the Game Boy
+  Link tests.
   `tests/results.py` reads what it left in the work memory.
 - `tests/hwtests.py` assembles gambatte-core's own hardware tests
   (`test/hwtests`) with upstream's own assembler (`test/qdgbas.py`), runs
@@ -89,7 +94,9 @@ git; the tests say SKIP without them.
 
 The second script runs the package in Chimera's window under Mono on a
 private Xvfb display; it needs Chimera's interface built (`dotnet build`).
-Its game test needs a `.gbc` game in `tests/games-local/` and
+It also runs two linked Game Boys in the window, and asks Chimera's own
+helper (`Chimera.exe --suggest-settings`) what the core suggests for a link
+project. Its game test needs a `.gbc` game in `tests/games-local/` and
 `cgb_boot.bin` in `tests/roms-local/`.
 
 Chimera's own checks of a package:

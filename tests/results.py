@@ -14,6 +14,8 @@ v = {
     "frames": w[2] | w[3] << 8,
     "clockSeconds": w[4],   # the cartridge clock's seconds
     "starts": w[5],         # how many times the cartridge was started
+    "linkIn": w[6],         # the last byte that came through the link port
+    "linkCount": w[7],      # how many transfers finished (counting on from 255 to 0)
 }
 if len(sys.argv) > 2:
     print(v[sys.argv[2]])

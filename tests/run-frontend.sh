@@ -8,6 +8,9 @@
 #  - the keys the package ships become Chimera's keys for the controls;
 #  - without its boot ROM a project that needs one is not opened, and the
 #    file is named;
+#  - two Game Boys linked run in the window side by side and leave the
+#    headless runner's memory, and the New Project window's question of
+#    which console each linked Game Boy is gets the core's answer;
 #  - a game of yours (tests/games-local/, the first .gbc) runs with the Game
 #    Boy Color's boot ROM from Chimera's firmware (tests/roms-local/
 #    cgb_boot.bin) and leaves the headless runner's memory.
@@ -143,6 +146,45 @@ if run_frontend keys "$work/config.keys.ini" 1 ""; then
 	fi
 else
 	report "window:keys" FAIL "Chimera did not finish the run: $(tail -2 "$work/keys.log" | tr '\n' ' ' | cut -c1-200)"
+fi
+
+# ---- two Game Boys linked: the link programs, P2's A held, the cable pulled
+python3 "$here/make-testprog.py" "$work/progs/master.gb" link=master
+python3 "$here/make-testprog.py" "$work/progs/slave.gb" link=slave
+mkdir -p "$work/lprobe"
+cp "$work/progs/master.gb" "$work/progs/slave.gb" "$work/lprobe/"
+printf '{"game":["master.gb"],"game2":["slave.gb"]}' > "$work/lprobe/slots"; printf '{"model":"LINK2","bootRom":"off"}' > "$work/lprobe/settings"
+"$runwbx" "$core" "$work/lprobe" --frames 1 --list-panel > "$work/panel-link.out" 2> /dev/null
+mkdir -p "$work/lk"
+cp "$work/progs/master.gb" "$work/progs/slave.gb" "$work/lk/"
+python3 "$here/make-project.py" "$package" "$work/lk/lk.chimeraProject" $((frames + 100)) model=LINK2 bootRom=off \
+	"press=P2 A:99:$frames" "press=Toggle Link Connection:199:1" "panel=$work/panel-link.out" \
+	-- "game=$work/lk/master.gb" "game2=$work/lk/slave.gb" > "$work/lk.log" 2>&1
+"$runner" --project "$work/lk/lk.chimeraProject" "$package" --files "$work/lk" --frames "$frames" \
+	--dump "P2 WRAM=$work/lk-engine.ram.bin" > "$work/lk-engine.log" 2>&1
+if ! run_frontend lk "$work/config.base.ini" "$frames" "P2 WRAM"; then
+	report "window:link" FAIL "Chimera did not finish the run: $(value lk detail) $(tail -2 "$work/lk.log" | tr '\n' ' ' | cut -c1-200)"
+elif [ "$(value lk frames)" = "$frames" ] && [ "$(value lk width)x$(value lk height)" = 320x144 ] && [ -s "$work/lk-engine.ram.bin" ] && cmp -s "$work/lk-engine.ram.bin" "$work/lk.ram.bin" \
+	&& [ "$(r "$work/lk.ram.bin" padSeen) $(r "$work/lk.ram.bin" linkCount)" = "1 200" ]; then
+	report "window:link" PASS "two linked Game Boys ran $frames frames in the window, side by side at 320x144, with P2's A held and the cable pulled at frame 200 (P2 saw A, and its transfers stopped at $(r "$work/lk.ram.bin" linkCount)); P2's work memory is what the headless runner leaves"
+else
+	report "window:link" FAIL "frames $(value lk frames) of $frames, picture $(value lk width)x$(value lk height), or P2's memory differs from the headless runner's ($(r "$work/lk.ram.bin" padSeen) $(r "$work/lk.ram.bin" linkCount))"
+fi
+
+# ---- the New Project window's suggestion, through Chimera's own helper
+python3 "$here/make-testprog.py" "$work/progs/testprog.gbc"
+python3 - "$work/suggest.json" "$work/progs/master.gb" "$work/progs/testprog.gbc" <<'PY'
+import json, os, sys
+out, a, b = sys.argv[1:]
+json.dump({"slots": {"game": [os.path.basename(a)], "game2": [os.path.basename(b)]},
+           "files": {os.path.basename(a): a, os.path.basename(b): b},
+           "settings": {"model": "LINK2", "bootRom": "on"}}, open(out, "w"))
+PY
+( cd "$chimera_root" && timeout 120 mono "$emu_exe" --suggest-settings "$package" "$work/progs/master.gb" "$work/suggest.json" ) > "$work/suggest.out" 2> "$work/suggest.err"
+if python3 -c "import json, sys; v = json.load(open(sys.argv[1]))['values']; sys.exit(0 if v == {'linkModel1': 'GB', 'linkModel2': 'GBC'} else 1)" "$work/suggest.out" 2> /dev/null; then
+	report "window:suggest" PASS "asked as the New Project window asks, the core suggests a Game Boy for P1's .gb game and a Game Boy Color for P2's .gbc: $(cat "$work/suggest.out" | cut -c1-120)"
+else
+	report "window:suggest" FAIL "the answer was: $(cat "$work/suggest.out" "$work/suggest.err" | tr '\n' ' ' | cut -c1-200)"
 fi
 
 # ---- a game of yours, with the Game Boy Color's boot ROM from Chimera's firmware

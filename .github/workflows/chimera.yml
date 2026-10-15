@@ -12,9 +12,13 @@ name: chimera waterbox core
 #   - every button, lag frames, the screen off, the cartridge's clock, the
 #     sound, Power, the saved data, the system bus, the four consoles, and
 #     the sandboxed core gives the native build's results with savestates;
+#   - two, three and four Game Boys linked by cable (test programs that
+#     talk through the link port): the bytes they pass, the cable pulled and
+#     put back, which are joined, each one's pad, Power, console and saved
+#     data, and the same with savestates;
 #   - upstream's 3,000-odd hardware tests give upstream's own results;
-#   - the package runs the test program in Chimera's headless runner and in
-#     its window;
+#   - the package runs the test program and a linked pair in Chimera's
+#     headless runner and in its window;
 #   - Chimera's own checks of the package pass.
 # What does not run here: the boot ROMs (Nintendo's) and games, which
 # tests/roms-local and tests/games-local hold where they exist.
@@ -135,20 +139,23 @@ jobs:
                    consoles:no-model consoles:models consoles:sgb-screen consoles:sgb-pads \
                    prog:sandbox prog:presses-change-the-run prog:state-every-frame prog:state-other-box \
                    prog:state-rewind consoles:sandbox refused:no-game refused:not-a-game refused:no-boot-rom \
-                   upstream:hwtests upstream:hwtests-sandbox engine:project; do
+                   link:exchange link:unplugged link:three link:four link:controls link:models link:sound \
+                   link:lag link:save-data link:sandbox link:state-rewind link:suggest refused:link \
+                   upstream:hwtests upstream:hwtests-sandbox engine:project engine:link; do
             grep -q "^$t  *PASS " gate.out || { echo "$t did not pass"; exit 1; }
           done
 
       - name: Run the window test
         # The package loaded by Chimera's own window (under Mono, on a
         # virtual display): the test program's memory against the headless
-        # runner's, and the keys.
+        # runner's, the keys, two linked Game Boys, and the New Project
+        # window's suggestion for them.
         run: |
           rc=0
           bash ./tests/run-frontend.sh --chimera-root "$GITHUB_WORKSPACE/chimera-checkout" > window.out 2>&1 || rc=$?
           cat window.out
           [ "$rc" -eq 0 ]
-          for t in window:program window:keys; do
+          for t in window:program window:keys window:link window:suggest; do
             grep -q "^$t  *PASS " window.out || { echo "$t did not pass"; exit 1; }
           done
 

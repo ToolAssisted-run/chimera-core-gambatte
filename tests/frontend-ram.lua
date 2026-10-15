@@ -48,7 +48,7 @@ meta.metaPath = job.meta
 
 -- this core's system
 local sysid = emu.getsystemid()
-if sysid ~= "GB" and sysid ~= "GBC" then
+if sysid ~= "GB" and sysid ~= "GBC" and sysid ~= "GBL" and sysid ~= "SGB" then
 	finish("ERROR", "wrong system id: " .. tostring(sysid))
 end
 if emu.getcorename() ~= "Gambatte" then

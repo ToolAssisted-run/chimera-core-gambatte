@@ -195,9 +195,130 @@ no frame shows an old one; the picture stays in the state's memory anyway.
 
 ### Not done
 
-- The link cable: next, as the owner decided.
+- The link cable: done, see the next entry.
 - The Game Boy Printer, the Game Boy Camera's picture, the infrared port's
   other end, and the infrared remote: libgambatte has calls
   for them; nothing answers them.
 - Colour correction, and BizHawk's frame lengths other than vblank-driven
   (equal-length frames, frames of a length set per frame).
+
+## 2026-10-15: Game Boy Link (user-decided)
+
+The owner's go-ahead: "go ahead with the link feature". BizHawk's Gambatte
+Link was read for how it does it; the code here is this repository's.
+
+### Machines, settings, files
+
+- Model `LINK2`, `LINK3` and `LINK4` are three more machines of the
+  package, system GBL ("Game Boy Link", BizHawk's id): two, three or four
+  Game Boys joined by link cables, each with its own game.
+- Each linked Game Boy's console is a setting of its own, `linkModel1` to
+  `linkModel4` (GB, GBC or GBA), shown only for the machines that have that
+  Game Boy. A Super Game Boy cannot be linked (BizHawk allows it; its
+  border and four pads in a row of screens are left out here), and is
+  refused if asked for.
+- The New Project window gets the consoles suggested: the core answers
+  `SuggestSettings` with the Game Boy Color for a `.gbc` game and the Game
+  Boy otherwise. Chimera asks before the settings are known, with the
+  files only, so the core takes a project with a game for P2 to be a link
+  project (a first version looked at the Model setting and answered nothing
+  in the real wizard; the window test now asks through Chimera's own
+  helper, `--suggest-settings`).
+- The slots `game2` to `game4` and `savedata2` to `savedata4` hold the other
+  Game Boys' games and saved data, shown only for the machines that have
+  them. Boot ROMs are needed for every console a linked Game Boy is; the
+  firmware conditions name each `linkModel`.
+
+### How the Game Boys run together
+
+As BizHawk's link machine: every Game Boy runs the whole frame, 35,112 of
+its samples, 4 samples (8 cycles) at a time while the cable is in, and
+between steps each joined pair's link ports are looked at: when one has
+clocked a byte out, the two bytes are swapped (libgambatte's `linkStatus`;
+the infrared light the same way). A Game Boy that ran past a step keeps
+its lead; one that ran past the frame's end starts the next frame with
+those samples. With the cable out, each runs the frame in one go and its
+link port is unplugged (a byte sent on its own clock brings in 255).
+
+So a link machine's frames are all the same length, unlike one console's,
+which end with each picture. A Game Boy's picture is copied into its place
+in the row whenever it finishes one. The sound of all of them is mixed,
+each at its share.
+
+Which are joined, as in BizHawk: two, P1 and P2. Three: P1 and P2;
+shifted, P2 and P3; spaced out, P1 and P3. Four: P1 with P2 and P3 with
+P4; shifted, P2 with P3 and P4 with P1; spaced out, P1 with P3 and P2 with
+P4. Toggle Link Shift and Toggle Link Spacing change it when pressed. In
+BizHawk's code (GambatteLink.IEmulator.cs) the shift is set, on the line
+after its toggle, to whether Toggle Link Shift is held, so there it follows
+the button rather than toggling; here it toggles, as the spacing and the
+connection do in both.
+
+The controls: a pad and a Power for each Game Boy, as BizHawk's link
+machine has them (Power restarts that Game Boy alone). A frame is a lag
+frame when no Game Boy read its buttons. Memory areas and the system bus
+are each Game Boy's ("P2 WRAM", "P2 System Bus"); Export Save Data writes
+"P2 <game>.sav" for each one with a battery.
+
+The core now also exports the system bus as Chimera finds one
+(`GetBusCount`, `GetBusName`, `GetBusSize`, `GetBusWritable`, `PeekBus`);
+the single console only had `ReadBus`, which Chimera does not look at on
+its own, so the bus was not shown before.
+
+### Tests
+
+The test program got a link mode (`tests/make-testprog.py link=master` or
+`link=slave`): a master sends its frame count every frame on its own clock;
+a slave answers on the master's clock with its own count, the top bit set.
+Each keeps the last byte that came in and counts transfers.
+
+`waterbox/run-gate.sh` is now 54 tests (38 before); the new ones:
+
+- `link:exchange`: two Game Boys pass a byte each way every frame, 300
+  transfers in 300 frames, each getting the other's count; 320x144.
+- `link:unplugged`: the cable pulled at frame 100 stops the transfers (100)
+  and the master gets 255; put back at 200, they go on.
+- `link:three` and `link:four`: which are joined, with the shift and the
+  spacing (counts like 44 1, 100 201, 100 1 for three; for four, the
+  spaced master gets the other master's count, without the top bit).
+- `link:controls`: each Game Boy's pad reaches it alone, and P2's Power
+  restarts P2 alone (P1 300 frames, P2 151 since).
+- `link:models`: a Game Boy Color as P1 draws another picture than a Game
+  Boy there, and P2's is the same.
+- `link:sound`: 329,175 samples in 600 frames, exactly (equal frames), and
+  P2's sound is in the mix.
+- `link:lag`, `link:save-data`, `link:suggest`, `refused:link`.
+- `link:sandbox`: native, sandbox, a state saved and loaded every frame,
+  and a new sandbox half way, for two (with the cable pulled and put back
+  and a Power) and four (with the shift and spacing changed);
+  `link:state-rewind`.
+- `link:boot` (local): a Game Boy and a Game Boy Color linked, each with its
+  boot ROM, exchange after them.
+- `link:game` (local): two Pokemon Golds linked, 2,000 frames from the boot
+  ROM with both pads used; native and sandbox the same.
+- `engine:link`: a link project with P2's A and the cable pulled plays in
+  Chimera's headless runner to the sandbox runner's memory.
+
+Result: 54 passed, 0 failed, 0 skipped. `tests/run-frontend.sh`: 6 passed
+(new: `window:link`, two linked Game Boys in the window, and
+`window:suggest`). Chimera's package checks: 18 passed. Windows: a link
+project of the test programs (cable pulled, a Power) and two Pokemon Golds
+linked for 3,000 frames end with the same memory as on Linux.
+
+Broken on purpose, each seen to fail: a byte passed one way only
+(`link:exchange`, `link:three`, `link:four`, `engine:link`); the cable
+toggle doing nothing (`link:unplugged`); the shifted three wired as spaced
+(`link:three`); every Game Boy reading P1's pad (`link:controls`);
+`linkModel` ignored (`link:models`, `refused:link`); P2's saved data from
+P1's slot (`link:save-data`); no suggestion (`link:suggest`); only P1's
+sound mixed (`link:sound`); only P1's reads counted (`link:lag`).
+
+### Not done or not proven
+
+- No game's own link feature (a Pokemon trade or battle, a two-player
+  game) has been played through the cable: the bytes were shown to pass
+  with the test programs only, and the Pokemon Golds were not taken to a
+  Cable Club.
+- A Super Game Boy cannot be linked.
+- BizHawk's sound choices for the link machine (which Game Boy is heard on
+  which side, each one muted or not) are not offered; all are mixed.

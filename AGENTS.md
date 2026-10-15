@@ -6,7 +6,10 @@ Game Boy Color core for Chimera (https://github.com/ToolAssisted-run/chimera),
 a frontend for tool-assisted speedruns. It produces one file,
 `gambatte.chimeraCore`: libgambatte compiled to run inside Chimera's sandbox
 (miniBox), a small program around it, and the declarations Chimera reads
-(buttons, settings, machines, file types, firmware).
+(buttons, settings, machines, file types, firmware). Its machines are the
+Game Boy, the Game Boy Color, the Game Boy Advance (Game Boy Color games),
+the Super Game Boy 2, and Game Boy Link machines of two to four Game Boys
+joined by link cables.
 
 Read [docs/BUILDING.md](docs/BUILDING.md) before building and
 [docs/PLAN.md](docs/PLAN.md) before changing how the core works: it is the
@@ -22,7 +25,10 @@ design log, with what was decided, why, and what was measured.
 - `waterbox/cinterface.cpp` - the program around libgambatte: it loads the
   game, the boot ROM and the saved data, sets the controls, runs the machine
   to the end of a picture, brings the sound down to 32,768 samples a second,
-  and is what Chimera's engine calls. It also defines `time()`.
+  and is what Chimera's engine calls. It also defines `time()`. For a link
+  machine it runs up to four libgambatte machines a few samples at a time
+  and passes the link ports' bytes between them (`link_frame`,
+  `link_ports`).
 - `waterbox/waterbox.config`, `file_slots.json`, `default_keybinds.json`,
   `package-licenses.json` - what the package declares. `licenses/` holds
   the licence texts.
@@ -70,6 +76,9 @@ purpose once and seen to fail.
   `-ffp-contract=off`.
 - **The machine's state is its memory.** A savestate is the sandbox's copy
   of the core's memory: the picture and the sound filter's sums included.
+- **The link machines are BizHawk's**: which Game Boys are joined, and the
+  link calls, are its Gambatte Link's (read for ideas, not copied): the
+  same wiring and the same steps of 4 samples.
 - **The controls are in two places that must agree**: the tables in
   `cinterface.cpp` and the `input` of each machine in `waterbox.config`.
   The test `package:controls` compares them; `package:key-names` checks the
