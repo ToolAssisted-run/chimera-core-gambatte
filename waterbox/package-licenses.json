@@ -27,6 +27,12 @@
    "commit": "{submodule:extern/gambatte-core}",
    "file": "licenses/snes_spc-LGPL-2.1.txt",
    "sourceUrl": "https://github.com/pokemon-speedrunning/gambatte-core/archive/{commit}.tar.gz"
+  },
+  {
+   "name": "A Game Boy, a photograph (pictures/game-boy.png)",
+   "license": "Public domain",
+   "url": "https://commons.wikimedia.org/wiki/File:Game-Boy-Original.jpg",
+   "file": "pictures/game-boy.txt"
   }
  ]
 }
