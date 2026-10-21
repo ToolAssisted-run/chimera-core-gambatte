@@ -279,9 +279,20 @@ static bool g_held[kMaxButtons];
 static int g_inputReads;
 static bool g_inputRead;
 
+// Chimera's function to call at each read of the buttons, so a Lua script's
+// event.oninputpoll runs there (chimera#344). It is the same callback slot in
+// every session and no savestate carries it.
+ECL_INVISIBLE static uintptr_t (*g_inputPoll)(uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t);
+ECL_EXPORT void SetInputPollCallback(uint64_t fn)
+{
+	g_inputPoll = (uintptr_t (*)(uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t, uintptr_t))(uintptr_t)fn;
+}
+
 static unsigned input_getter(void *p)
 {
 	g_inputReads++;
+	if (g_inputPoll)
+		g_inputPoll(0, 0, 0, 0, 0, 0);
 	const int i = (int)(intptr_t)p;
 	if (!g_sgb)
 		return g_p[i].padBits;
