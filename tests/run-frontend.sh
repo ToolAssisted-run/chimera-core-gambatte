@@ -180,7 +180,7 @@ json.dump({"slots": {"game": [os.path.basename(a)], "game2": [os.path.basename(b
            "files": {os.path.basename(a): a, os.path.basename(b): b},
            "settings": {"model": "LINK2", "bootRom": "on"}}, open(out, "w"))
 PY
-( cd "$chimera_root" && timeout 120 mono "$emu_exe" --suggest-settings "$package" "$work/progs/master.gb" "$work/suggest.json" ) > "$work/suggest.out" 2> "$work/suggest.err"
+( cd "$chimera_root" && timeout 120 mono "$emu_exe" --suggest-settings "$package" "$work/suggest.json" ) > "$work/suggest.out" 2> "$work/suggest.err"
 if python3 -c "import json, sys; v = json.load(open(sys.argv[1]))['values']; sys.exit(0 if v == {'linkModel1': 'GB', 'linkModel2': 'GBC'} else 1)" "$work/suggest.out" 2> /dev/null; then
 	report "window:suggest" PASS "asked as the New Project window asks, the core suggests a Game Boy for P1's .gb game and a Game Boy Color for P2's .gbc: $(cat "$work/suggest.out" | cut -c1-120)"
 else
