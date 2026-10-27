@@ -96,17 +96,18 @@ The boot ROM tests need the boot ROMs in `tests/roms-local/` (`dmg_boot.bin`,
 nothing else: `tests/pokemon-gold-opening.txt` plays it from power-on. Both folders are ignored by
 git; the tests say SKIP without them.
 
-The second script runs the package in Chimera's window under Mono on a
-private Xvfb display; it needs Chimera's interface built (`dotnet build`).
+The second script runs the package in Chimera's window, run headless
+(no display is needed); it needs Chimera built with its window
+(`tools/ci-chimera.sh`).
 It also runs two linked Game Boys in the window, and asks Chimera's own
-helper (`Chimera.exe --suggest-settings`) what the core suggests for a link
+helper (`chimera-run --suggest`) what the core suggests for a link
 project. Its game test needs a `.gbc` game in `tests/games-local/` and
 `cgb_boot.bin` in `tests/roms-local/`.
 
 Chimera's own checks of a package:
 
 ```sh
-CHIMERA_CORES_DIR=<folder with the package> dotnet test source/gui/Chimera.Tests.Client.Common/Chimera.Tests.Client.Common.csproj -c Release --filter "FullyQualifiedName~InstalledCorePackagesTests|FullyQualifiedName~MnemonicUniquenessTests"
+CHIMERA_CORES_DIR=<folder with the package> <chimera>/build/meson-linux/source/ui/test-packages
 ```
 
 run in the Chimera checkout.

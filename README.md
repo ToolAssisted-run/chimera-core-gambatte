@@ -5,7 +5,7 @@ frontend for tool-assisted speedruns, for the **Game Boy** and the **Game Boy
 Color**. It is built on libgambatte from
 [Gambatte-Speedrun](https://github.com/pokemon-speedrunning/gambatte-core),
 the Game Boy emulator speedrunners use, and produces one file,
-`gambatte.chimeraCore`, that goes in Chimera's `Cores` folder.
+`gambatte.chimeraCore`, that goes in Chimera's `cores` folder.
 
 ## Status
 
