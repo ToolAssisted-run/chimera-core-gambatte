@@ -3,7 +3,7 @@
  "slots": [
   {
    "id": "game",
-   "title": "Game",
+   "title": "slot.game",
    "min": 1,
    "max": 1,
    "formats": [
@@ -11,18 +11,18 @@
     "gbc",
     "sgb"
    ],
-   "help": "The Game Boy or Game Boy Color game: the cartridge's contents, a .gb or .gbc file (.sgb for a Super Game Boy one). In a Game Boy Link machine, the game of P1's Game Boy."
+   "help": "slot.game.help"
   },
   {
    "id": "game2",
-   "title": "P2's game",
+   "title": "slot.game2",
    "min": 1,
    "max": 1,
    "formats": [
     "gb",
     "gbc"
    ],
-   "help": "The game of P2's Game Boy in a Game Boy Link machine: a .gb or .gbc file. It may be the same game as another Game Boy's.",
+   "help": "slot.game2.help",
    "exposedWhen": {
     "setting": "model",
     "in": [
@@ -34,14 +34,14 @@
   },
   {
    "id": "game3",
-   "title": "P3's game",
+   "title": "slot.game3",
    "min": 1,
    "max": 1,
    "formats": [
     "gb",
     "gbc"
    ],
-   "help": "The game of P3's Game Boy in a Game Boy Link machine: a .gb or .gbc file. It may be the same game as another Game Boy's.",
+   "help": "slot.game3.help",
    "exposedWhen": {
     "setting": "model",
     "in": [
@@ -52,14 +52,14 @@
   },
   {
    "id": "game4",
-   "title": "P4's game",
+   "title": "slot.game4",
    "min": 1,
    "max": 1,
    "formats": [
     "gb",
     "gbc"
    ],
-   "help": "The game of P4's Game Boy in a Game Boy Link machine: a .gb or .gbc file. It may be the same game as another Game Boy's.",
+   "help": "slot.game4.help",
    "exposedWhen": {
     "setting": "model",
     "in": [
@@ -69,27 +69,27 @@
   },
   {
    "id": "savedata",
-   "title": "Saved data",
+   "title": "slot.savedata",
    "min": 0,
    "max": 1,
    "formats": [
     "sav"
    ],
-   "help": "The cartridge's battery-backed memory at the start, for a project that begins from a saved game: a file as Emulator > Export Save Data... writes it, or a .sav file of Gambatte's or of another emulator. A cartridge with a clock keeps the clock's registers after the memory, as Gambatte writes them; a file without them starts the clock at zero. In a Game Boy Link machine, P1's. The file is never changed. Leave this empty to start with the cartridge's memory empty.",
+   "help": "slot.savedata.help",
    "namePattern": "\\.sav$",
-   "nameHelp": "a saved-data file is identified by its extension, .sav."
+   "nameHelp": "common.a_saved_data_file_is_identified"
   },
   {
    "id": "savedata2",
-   "title": "P2's saved data",
+   "title": "slot.savedata2",
    "min": 0,
    "max": 1,
    "formats": [
     "sav"
    ],
-   "help": "The battery-backed memory of P2's cartridge at the start, in a Game Boy Link machine, as for P1's saved data: a file Export Save Data writes (\"P2 <game>.sav\") or a .sav file of Gambatte's or another emulator's. The file is never changed. Leave this empty to start with the cartridge's memory empty.",
+   "help": "slot.savedata2.help",
    "namePattern": "\\.sav$",
-   "nameHelp": "a saved-data file is identified by its extension, .sav.",
+   "nameHelp": "common.a_saved_data_file_is_identified",
    "exposedWhen": {
     "setting": "model",
     "in": [
@@ -101,15 +101,15 @@
   },
   {
    "id": "savedata3",
-   "title": "P3's saved data",
+   "title": "slot.savedata3",
    "min": 0,
    "max": 1,
    "formats": [
     "sav"
    ],
-   "help": "The battery-backed memory of P3's cartridge at the start, in a Game Boy Link machine, as for P1's saved data: a file Export Save Data writes (\"P3 <game>.sav\") or a .sav file of Gambatte's or another emulator's. The file is never changed. Leave this empty to start with the cartridge's memory empty.",
+   "help": "slot.savedata3.help",
    "namePattern": "\\.sav$",
-   "nameHelp": "a saved-data file is identified by its extension, .sav.",
+   "nameHelp": "common.a_saved_data_file_is_identified",
    "exposedWhen": {
     "setting": "model",
     "in": [
@@ -120,15 +120,15 @@
   },
   {
    "id": "savedata4",
-   "title": "P4's saved data",
+   "title": "slot.savedata4",
    "min": 0,
    "max": 1,
    "formats": [
     "sav"
    ],
-   "help": "The battery-backed memory of P4's cartridge at the start, in a Game Boy Link machine, as for P1's saved data: a file Export Save Data writes (\"P4 <game>.sav\") or a .sav file of Gambatte's or another emulator's. The file is never changed. Leave this empty to start with the cartridge's memory empty.",
+   "help": "slot.savedata4.help",
    "namePattern": "\\.sav$",
-   "nameHelp": "a saved-data file is identified by its extension, .sav.",
+   "nameHelp": "common.a_saved_data_file_is_identified",
    "exposedWhen": {
     "setting": "model",
     "in": [

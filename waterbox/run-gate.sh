@@ -374,20 +374,20 @@ lfolder lsgb LINK2 "$progs/master.gb" "$progs/slave.gb"
 printf '{"model":"LINK2","bootRom":"off","linkModel2":"SGB2"}' > "$work/lsgb/settings"
 nat lsgb lsgb --frames 1
 check "refused:link" "a Game Boy Link machine with a game missing is refused and names the player, and a Super Game Boy cannot be linked" \
-	sh -c "grep -q 'Init failed.*no game was given for the Game Boy of P2' '$work/lone.out' '$work/lone.err' && grep -q 'Init failed.*Super Game Boy cannot be linked' '$work/lsgb.out' '$work/lsgb.err'"
+	sh -c "grep -q 'Init failed.*error.no_file_player[^a-z]2' '$work/lone.out' '$work/lone.err' && grep -q 'Init failed.*error.sgb_link' '$work/lsgb.out' '$work/lsgb.err'"
 
 # ------------------------------------------------- what is refused
 mkdir -p "$work/none"
 printf '{"game":[]}' > "$work/none/slots"; printf '{}' > "$work/none/settings"
 nat none none --frames 1
-check "refused:no-game" "a machine with no game is refused, and says so" grep -q "Init failed.*no game was given" "$work/none.out" "$work/none.err"
+check "refused:no-game" "a machine with no game is refused, and says so" grep -q "Init failed.*error.no_file" "$work/none.out" "$work/none.err"
 printf 'not a game' > "$work/junk.gb"
 folder junk "$off" "$work/junk.gb"
 nat junk junk --frames 1
-check "refused:not-a-game" "a file too short to be a game is refused, and says so" grep -q "Init failed.*too short to be a Game Boy game" "$work/junk.out" "$work/junk.err"
+check "refused:not-a-game" "a file too short to be a game is refused, and says so" grep -q "Init failed.*error.too_short" "$work/junk.out" "$work/junk.err"
 folder nobios '{}' "$progs/testprog.gb"
 nat nobios nobios --frames 1
-check "refused:no-boot-rom" "with Boot ROM 'on' and no boot ROM given, the machine is refused, and says which file it needs" grep -q "Init failed.*dmg_boot.bin is missing" "$work/nobios.out" "$work/nobios.err"
+check "refused:no-boot-rom" "with Boot ROM 'on' and no boot ROM given, the machine is refused, and says which file it needs" grep -q "Init failed.*error.boot_rom.dmg_boot.bin" "$work/nobios.out" "$work/nobios.err"
 
 # ------------------------------------------------- upstream's own tests
 python3 "$root/tests/hwtests.py" "$native" "$work/hw" > "$work/hw.out" 2> "$work/hw.err"

@@ -43,6 +43,11 @@ extern "C" time_t time(time_t *t)
 }
 
 // ---- what went wrong, for Chimera to show ----------------------------------
+/* A text a person reads is a key of languages/en.json, each of its
+ * arguments after a TEXT_ARG (chimera docs/translations.md). TEXT_ARG is a
+ * string of its own so the byte after it is never read as more of its hex. */
+#define TEXT_ARG "\x1f"
+
 static char g_loadError[512];
 
 // The models a game can run on, as the Model setting names them; the link
@@ -415,22 +420,22 @@ static bool load_player(int i, Model model)
 	if (!p.gameName[0])
 	{
 		if (g_link)
-			snprintf(g_loadError, sizeof g_loadError, "no game was given for the Game Boy of P%d", i + 1);
+			snprintf(g_loadError, sizeof g_loadError, "error.no_file_player" TEXT_ARG "%d", i + 1);
 		else
-			snprintf(g_loadError, sizeof g_loadError, "no game was given");
+			snprintf(g_loadError, sizeof g_loadError, "error.no_file");
 		return false;
 	}
 	long size = 0;
 	char *rom = (char *)read_file(p.gameName, &size);
 	if (!rom)
 	{
-		snprintf(g_loadError, sizeof g_loadError, "the game %s could not be read", p.gameName);
+		snprintf(g_loadError, sizeof g_loadError, "error.not_read" TEXT_ARG "%s", p.gameName);
 		return false;
 	}
 	if (size < 0x150)
 	{
 		free(rom);
-		snprintf(g_loadError, sizeof g_loadError, "%s is too short to be a Game Boy game (%ld bytes)", p.gameName, size);
+		snprintf(g_loadError, sizeof g_loadError, "error.too_short" TEXT_ARG "%s" TEXT_ARG "%ld", p.gameName, size);
 		return false;
 	}
 
@@ -464,8 +469,7 @@ static bool load_player(int i, Model model)
 		{
 			free(bios);
 			free(rom);
-			snprintf(g_loadError, sizeof g_loadError,
-				"the boot ROM %s is missing or is not %ld bytes; give it, or set Boot ROM to off", id, want);
+			snprintf(g_loadError, sizeof g_loadError, "error.boot_rom" TEXT_ARG "%s" TEXT_ARG "%ld", id, want);
 			return false;
 		}
 		g_gb[i].loadBios(bios, (std::size_t)biosSize);
@@ -479,7 +483,7 @@ static bool load_player(int i, Model model)
 	free(rom);
 	if (res != gambatte::LOADRES_OK)
 	{
-		snprintf(g_loadError, sizeof g_loadError, "%s could not be loaded: %s", p.gameName,
+		snprintf(g_loadError, sizeof g_loadError, "error.not_loaded" TEXT_ARG "%s" TEXT_ARG "%s", p.gameName,
 			gambatte::to_string(res).c_str());
 		return false;
 	}
@@ -665,7 +669,7 @@ ECL_EXPORT const char *SuggestSettings(void)
 	}
 	snprintf(g_suggestion, sizeof g_suggestion,
 		"{\"values\":{%s},\"note\":\"%s\",\"firmware\":[]}", values,
-		got ? "For a Game Boy Link machine, each Game Boy is the Game Boy Color when its game is a .gbc file, and the Game Boy otherwise." : "");
+		got ? "suggest.link_models" : "");
 	return g_suggestion;
 }
 
@@ -686,7 +690,7 @@ ECL_EXPORT int Init(void)
 			Model model = model_named(m);
 			if (model == kSgb2)
 			{
-				snprintf(g_loadError, sizeof g_loadError, "a Super Game Boy cannot be linked");
+				snprintf(g_loadError, sizeof g_loadError, "error.sgb_link");
 				return 0;
 			}
 			if (!load_player(i, model == kAuto ? kGb : model))
