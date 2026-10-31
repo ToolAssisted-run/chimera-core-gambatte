@@ -39,11 +39,11 @@
 		"slot.savedata": "Gemte data",
 		"slot.savedata.help": "Patronens batteridrevne hukommelse ved starten, til et projekt der begynder fra et gemt spil: en fil, sådan som Emulator > Eksportér gemte data... skriver den, eller en .sav-fil fra Gambatte eller en anden emulator. En patron med ur gemmer urets registre efter hukommelsen, sådan som Gambatte skriver dem; en fil uden dem starter uret på nul. I en Game Boy Link-maskine er det P1's. Filen ændres aldrig. Lad feltet være tomt for at starte med patronens hukommelse tom.",
 		"slot.savedata2": "P2's gemte data",
-		"slot.savedata2.help": "Den batteridrevne hukommelse på P2's patron ved starten, i en Game Boy Link-maskine, som for P1's gemte data: en fil, Eksportér gemte data skriver (\"P2 <spil>.sav\"), eller en .sav-fil fra Gambattes eller en anden emulators. Filen ændres aldrig. Lad feltet være tomt for at starte med patronens hukommelse tom.",
+		"slot.savedata2.help": "Den batteridrevne hukommelse på P2's patron ved starten, i en Game Boy Link-maskine, som for P1's gemte data: en fil, Eksportér gemte data skriver (\"P2 <spil>.sav\"), eller en .sav-fil fra Gambatte eller en anden emulator. Filen ændres aldrig. Lad feltet være tomt for at starte med patronens hukommelse tom.",
 		"slot.savedata3": "P3's gemte data",
-		"slot.savedata3.help": "Den batteridrevne hukommelse på P3's patron ved starten, i en Game Boy Link-maskine, som for P1's gemte data: en fil, Eksportér gemte data skriver (\"P3 <spil>.sav\"), eller en .sav-fil fra Gambattes eller en anden emulators. Filen ændres aldrig. Lad feltet være tomt for at starte med patronens hukommelse tom.",
+		"slot.savedata3.help": "Den batteridrevne hukommelse på P3's patron ved starten, i en Game Boy Link-maskine, som for P1's gemte data: en fil, Eksportér gemte data skriver (\"P3 <spil>.sav\"), eller en .sav-fil fra Gambatte eller en anden emulator. Filen ændres aldrig. Lad feltet være tomt for at starte med patronens hukommelse tom.",
 		"slot.savedata4": "P4's gemte data",
-		"slot.savedata4.help": "Den batteridrevne hukommelse på P4's patron ved starten, i en Game Boy Link-maskine, som for P1's gemte data: en fil, Eksportér gemte data skriver (\"P4 <spil>.sav\"), eller en .sav-fil fra Gambattes eller en anden emulators. Filen ændres aldrig. Lad feltet være tomt for at starte med patronens hukommelse tom.",
+		"slot.savedata4.help": "Den batteridrevne hukommelse på P4's patron ved starten, i en Game Boy Link-maskine, som for P1's gemte data: en fil, Eksportér gemte data skriver (\"P4 <spil>.sav\"), eller en .sav-fil fra Gambatte eller en anden emulator. Filen ændres aldrig. Lad feltet være tomt for at starte med patronens hukommelse tom.",
 		"suggest.link_models": "For en Game Boy Link-maskine er hver Game Boy en Game Boy Color, når dens spil er en .gbc-fil, og ellers en Game Boy."
 	}
 }

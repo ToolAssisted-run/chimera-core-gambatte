@@ -37,13 +37,13 @@
 		"slot.game4": "Spill for P4",
 		"slot.game4.help": "Spillet til P4s Game Boy i en Game Boy Link-maskin: en .gb- eller .gbc-fil. Det kan være samme spill som en annen Game Boy har.",
 		"slot.savedata": "Lagrede data",
-		"slot.savedata.help": "Kassettens batteridrevne minne ved start, for et prosjekt som begynner fra et lagret spill: en fil slik Emulator > Eksporter lagrede data... skriver den, eller en .sav-fil fra Gambattes eller en annen emulator. En kassett med klokke beholder klokkens registre etter minnet, slik Gambatte skriver dem; en fil uten dem starter klokken på null. I en Game Boy Link-maskin er det P1s. Filen endres aldri. La dette stå tomt for å starte med kassettens minne tomt.",
+		"slot.savedata.help": "Kassettens batteridrevne minne ved start, for et prosjekt som begynner fra et lagret spill: en fil slik Emulator > Eksporter lagrede data... skriver den, eller en .sav-fil fra Gambatte eller en annen emulator. En kassett med klokke beholder klokkens registre etter minnet, slik Gambatte skriver dem; en fil uten dem starter klokken på null. I en Game Boy Link-maskin er det P1s. Filen endres aldri. La dette stå tomt for å starte med kassettens minne tomt.",
 		"slot.savedata2": "Lagrede data for P2",
-		"slot.savedata2.help": "Det batteridrevne minnet til P2s kassett ved start, i en Game Boy Link-maskin, som for P1s lagrede data: en fil Eksporter lagrede data skriver (\"P2 <spill>.sav\"), eller en .sav-fil fra Gambattes eller en annen emulators. Filen endres aldri. La dette stå tomt for å starte med kassettens minne tomt.",
+		"slot.savedata2.help": "Det batteridrevne minnet til P2s kassett ved start, i en Game Boy Link-maskin, som for P1s lagrede data: en fil Eksporter lagrede data skriver (\"P2 <spill>.sav\"), eller en .sav-fil fra Gambatte eller en annen emulator. Filen endres aldri. La dette stå tomt for å starte med kassettens minne tomt.",
 		"slot.savedata3": "Lagrede data for P3",
-		"slot.savedata3.help": "Det batteridrevne minnet til P3s kassett ved start, i en Game Boy Link-maskin, som for P1s lagrede data: en fil Eksporter lagrede data skriver (\"P3 <spill>.sav\"), eller en .sav-fil fra Gambattes eller en annen emulators. Filen endres aldri. La dette stå tomt for å starte med kassettens minne tomt.",
+		"slot.savedata3.help": "Det batteridrevne minnet til P3s kassett ved start, i en Game Boy Link-maskin, som for P1s lagrede data: en fil Eksporter lagrede data skriver (\"P3 <spill>.sav\"), eller en .sav-fil fra Gambatte eller en annen emulator. Filen endres aldri. La dette stå tomt for å starte med kassettens minne tomt.",
 		"slot.savedata4": "Lagrede data for P4",
-		"slot.savedata4.help": "Det batteridrevne minnet til P4s kassett ved start, i en Game Boy Link-maskin, som for P1s lagrede data: en fil Eksporter lagrede data skriver (\"P4 <spill>.sav\"), eller en .sav-fil fra Gambattes eller en annen emulators. Filen endres aldri. La dette stå tomt for å starte med kassettens minne tomt.",
+		"slot.savedata4.help": "Det batteridrevne minnet til P4s kassett ved start, i en Game Boy Link-maskin, som for P1s lagrede data: en fil Eksporter lagrede data skriver (\"P4 <spill>.sav\"), eller en .sav-fil fra Gambatte eller en annen emulator. Filen endres aldri. La dette stå tomt for å starte med kassettens minne tomt.",
 		"suggest.link_models": "For en Game Boy Link-maskin er hver Game Boy en Game Boy Color når spillet er en .gbc-fil, og ellers en Game Boy."
 	}
 }

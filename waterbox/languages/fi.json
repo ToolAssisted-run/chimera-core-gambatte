@@ -37,13 +37,13 @@
 		"slot.game4": "P4:n peli",
 		"slot.game4.help": "P4:n Game Boyn peli Game Boy -linkkikoneessa: .gb- tai .gbc-tiedosto. Se voi olla sama peli kuin toisen Game Boyn.",
 		"slot.savedata": "Tallennetut tiedot",
-		"slot.savedata.help": "Kasetin akkuvarmistettu muisti alussa, projektille, joka alkaa tallennetusta pelistä: tiedosto, jonka Emulaattori > Vie tallennustiedot... kirjoittaa, tai Gambatten tai toisen emulaattorin .sav-tiedosto. Kasetti, jossa on kello, säilyttää kellon rekisterit muistin jälkeen, kuten Gambatte ne kirjoittaa; ilman niitä kello alkaa nollasta. Game Boy -linkkikoneessa P1:n. Tiedostoa ei koskaan muuteta. Jätä tyhjäksi, jos haluat alkaa tyhjällä kasetin muistilla.",
+		"slot.savedata.help": "Kasetin akkuvarmistettu muisti alussa, projektille, joka alkaa tallennetusta pelistä: tiedosto, jonka Emulaattori > Vie tallennustiedot... kirjoittaa, tai Gambatte-emulaattorin tai toisen emulaattorin .sav-tiedosto. Kasetti, jossa on kello, säilyttää kellon rekisterit muistin jälkeen, kuten Gambatte ne kirjoittaa; ilman niitä kello alkaa nollasta. Game Boy -linkkikoneessa P1:n. Tiedostoa ei koskaan muuteta. Jätä tyhjäksi, jos haluat alkaa tyhjällä kasetin muistilla.",
 		"slot.savedata2": "P2:n tallennetut tiedot",
-		"slot.savedata2.help": "P2:n kasetin akkuvarmistettu muisti alussa, Game Boy -linkkikoneessa, kuten P1:n tallennetut tiedot: tiedosto, jonka Vie tallennustiedot kirjoittaa (\"P2 <peli>.sav\"), tai Gambatten tai toisen emulaattorin .sav-tiedosto. Tiedostoa ei koskaan muuteta. Jätä tyhjäksi, jos haluat alkaa tyhjällä kasetin muistilla.",
+		"slot.savedata2.help": "P2:n kasetin akkuvarmistettu muisti alussa, Game Boy -linkkikoneessa, kuten P1:n tallennetut tiedot: tiedosto, jonka Vie tallennustiedot kirjoittaa (\"P2 <peli>.sav\"), tai Gambatte-emulaattorin tai toisen emulaattorin .sav-tiedosto. Tiedostoa ei koskaan muuteta. Jätä tyhjäksi, jos haluat alkaa tyhjällä kasetin muistilla.",
 		"slot.savedata3": "P3:n tallennetut tiedot",
-		"slot.savedata3.help": "P3:n kasetin akkuvarmistettu muisti alussa, Game Boy -linkkikoneessa, kuten P1:n tallennetut tiedot: tiedosto, jonka Vie tallennustiedot kirjoittaa (\"P3 <peli>.sav\"), tai Gambatten tai toisen emulaattorin .sav-tiedosto. Tiedostoa ei koskaan muuteta. Jätä tyhjäksi, jos haluat alkaa tyhjällä kasetin muistilla.",
+		"slot.savedata3.help": "P3:n kasetin akkuvarmistettu muisti alussa, Game Boy -linkkikoneessa, kuten P1:n tallennetut tiedot: tiedosto, jonka Vie tallennustiedot kirjoittaa (\"P3 <peli>.sav\"), tai Gambatte-emulaattorin tai toisen emulaattorin .sav-tiedosto. Tiedostoa ei koskaan muuteta. Jätä tyhjäksi, jos haluat alkaa tyhjällä kasetin muistilla.",
 		"slot.savedata4": "P4:n tallennetut tiedot",
-		"slot.savedata4.help": "P4:n kasetin akkuvarmistettu muisti alussa, Game Boy -linkkikoneessa, kuten P1:n tallennetut tiedot: tiedosto, jonka Vie tallennustiedot kirjoittaa (\"P4 <peli>.sav\"), tai Gambatten tai toisen emulaattorin .sav-tiedosto. Tiedostoa ei koskaan muuteta. Jätä tyhjäksi, jos haluat alkaa tyhjällä kasetin muistilla.",
+		"slot.savedata4.help": "P4:n kasetin akkuvarmistettu muisti alussa, Game Boy -linkkikoneessa, kuten P1:n tallennetut tiedot: tiedosto, jonka Vie tallennustiedot kirjoittaa (\"P4 <peli>.sav\"), tai Gambatte-emulaattorin tai toisen emulaattorin .sav-tiedosto. Tiedostoa ei koskaan muuteta. Jätä tyhjäksi, jos haluat alkaa tyhjällä kasetin muistilla.",
 		"suggest.link_models": "Game Boy Link -koneessa jokainen Game Boy on Game Boy Color, kun sen peli on .gbc-tiedosto, ja muulloin Game Boy."
 	}
 }
