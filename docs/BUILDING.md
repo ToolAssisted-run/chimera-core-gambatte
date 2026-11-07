@@ -116,6 +116,11 @@ run in the Chimera checkout.
 
 `.github/workflows/chimera.yml` builds Chimera and miniBox, the two
 flavors and the package, runs both test scripts and Chimera's checks, and
-publishes the package as this repository's release. A runner has no boot
+publishes the package as this repository's release. It does all of that
+twice, once for each CPU, on a runner of that CPU (x86_64 on ubuntu-24.04,
+aarch64 on ubuntu-24.04-arm): a package is machine code for one CPU, and the
+guest is built for the CPU it is built on. A release carries both packages,
+`gambatte-<version>-x86_64.chimeraCore` and
+`gambatte-<version>-aarch64.chimeraCore`. A runner has no boot
 ROM and no game: those tests are skipped there, and the workflow asks for
 the others by name.
