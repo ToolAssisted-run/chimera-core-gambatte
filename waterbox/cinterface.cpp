@@ -26,6 +26,12 @@
 
 #include "gambatte.h"
 
+/* this core's windows in Chimera's Emulator menu: miniBox's ready-made Export
+ * Save Data, built on its exports (Chimera has no tool of its own for a core,
+ * Chimera issue 610) */
+#define WBX_WINDOWS_IMPLEMENTATION
+#include <waterbox_windows.h>
+
 // ---- the computer's clock ----------------------------------------------------
 // libgambatte asks the computer for the time in three places: a cartridge
 // clock (MBC3, HuC3) in real-time mode, and the time it writes beside a
